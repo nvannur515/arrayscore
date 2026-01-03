@@ -1,15 +1,40 @@
 import os
 import sys
-
 def parse_scores_from_string(s):
-    # accept comma/space separated numbers
-    parts = [p.strip() for p in s.replace(',', ' ').split()]
+    parts = s.replace(',', ' ').split()
     scores = []
     for p in parts:
-        if p == '': 
-            continue
         try:
             scores.append(float(p))
         except ValueError:
-            print(f"warning: skipping non-numeric token: {p}")
+            print(f"Warning: skipping non-numeric value -> {p}")
     return scores
+def read_scores():
+    # Priority:
+    # 1. Command-line arguments
+    # 2. SCORES environment variable
+    # 3. scores.txt file
+    # 4. User input
+    if len(sys.argv) > 1:
+        return parse_scores_from_string(" ".join(sys.argv[1:]))
+    env_scores = os.getenv("SCORES")
+    if env_scores:
+        return parse_scores_from_string(env_scores)
+    if os.path.isfile("scores.txt"):
+        with open("scores.txt", "r") as file:
+            return parse_scores_from_string(file.read())
+    user_input = input("Enter scores separated by spaces or commas: ")
+    return parse_scores_from_string(user_input)
+def main():
+    scores = read_scores()
+    if not scores:
+        print("No valid scores provided.")
+        sys.exit(1)
+    total = sum(scores)
+    average = total / len(scores)
+    print("\n=== Program Output ===")
+    print(f"Count of scores : {len(scores)}")
+    print(f"Sum             : {total:.2f}")
+    print(f"Average         : {average:.2f}")
+if __name__ == "__main__":
+    main()

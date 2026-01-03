@@ -1,0 +1,15 @@
+import os
+import sys
+
+def parse_scores_from_string(s):
+    # accept comma/space separated numbers
+    parts = [p.strip() for p in s.replace(',', ' ').split()]
+    scores = []
+    for p in parts:
+        if p == '': 
+            continue
+        try:
+            scores.append(float(p))
+        except ValueError:
+            print(f"warning: skipping non-numeric token: {p}")
+    return scores
